@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Styled Sliders</title>
+
+    <style>
+
+        body {
+
+            margin: 0;
+
+            padding: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+            font-family: Arial, sans-serif;
+
+        }
+
+        .sliders-container {
+
+            background-color: white;
+
+            padding: 30px 40px;
+
+            border-radius: 15px;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+            width: 400px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+        }
+
+        h1 {
+
+            color: #4a4a4a;
+
+            margin-bottom: 30px;
+
+            font-size: 24px;
+
+            text-align: center;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="sliders-container">
+
+        <h1>Custom Sliders</h1>
+
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+
+                function createSlider(containerId, trackColor, thumbColor, hasTicks, hasDivisors, hasThumbTriangle, initialTransparent, fillColor, showNumbers) {
+
+                    const sliderWrapper = document.createElement("div");
+
+                    sliderWrapper.style.margin = "25px 0";
+
+                    const label = document.createElement("div");
+
+                    label.textContent = containerId;
+
+                    label.style.fontSize = "14px";
+
+                    label.style.marginBottom = "8px";
+
+                    label.style.color = "#555";
+
+                    label.style.fontWeight = "bold";
+
+                    sliderWrapper.appendChild(label);
+
+                    const sliderContainer = document.createElement("div");
+
+                    sliderContainer.style.position = "relative";
+
+                    sliderContainer.style.width = "300px";
+
+                    sliderContainer.style.height = "6px";
+
+                    sliderContainer.style.background = trackColor;
+
+                    sliderContainer.style.borderRadius = "3px";
+
+                    sliderContainer.style.overflow = "visible";
+
+                    const movingTrack = document.createElement("div");
+
+                    movingTrack.style.position = "absolute";
+
+                    movingTrack.style.height = "100%";
+
+                    movingTrack.style.background = initialTransparent ? "transparent" : fillColor;
+
+                    movingTrack.style.width = "0%";
+
+                    movingTrack.style.borderRadius = "3px";
+
+                    movingTrack.style.transition = "background 0.3s ease";
+
+                    if (showNumbers) {
+
+                        const numberLabels = document.createElement("div");
+
+                        numberLabels.style.display = "flex";
+
+                        numberLabels.style.justifyContent = "space-between";
+
+                        numberLabels.style.width = "300px";
+
+                        numberLabels.style.marginTop = "5px";
+
+                        numberLabels.style.fontSize = "12px";
+
+                        numberLabels.style.position = "absolute";
+
+                        numberLabels.style.top = "15px";
+
+                        numberLabels.style.left = "0";
+
+                        [0, 20, 40, 60, 80, 100].forEach(num => {
+
+                            const numLabel = document.createElement("span");
+
+                            numLabel.textContent = num;
+
+                            numLabel.style.flex = "1";
+
+                            numLabel.style.textAlign = "center";
+
+                            numLabel.style.color = "#777";
+
+                            numberLabels.appendChild(numLabel);
+
+                        });
+
+                        sliderContainer.appendChild(numberLabels);
+
+                    }
+
+                    if (hasDivisors) {
+
+                        for (let i = 1; i <= 5; i++) {
+
+                            const divisor = document.createElement("div");
+
+                            divisor.style.position = "absolute";
+
+                            divisor.style.width = "4px";
+
+                            divisor.style.height = "10px";
+
+                            divisor.style.background = thumbColor;
+
+                            divisor.style.left = `${(i / 5) * 100}%`;
+
+                            divisor.style.transform = "translateX(-50%)";
+
+                            divisor.style.borderRadius = "2px";
+
+                            sliderContainer.appendChild(divisor);
+
+                        }
+
+                    }
+
+                    if (hasTicks) {
+
+                        for (let i = 0; i <= 20; i++) {
+
+                            const tick = document.createElement("div");
+
+                            tick.style.position = "absolute";
+
+                            tick.style.width = "1px";
+
+                            tick.style.height = i % 5 === 0 ? "12px" : "8px";
+
+                            tick.style.background = "blue";
+
+                            tick.style.left = `${(i / 20) * 100}%`;
+
+                            tick.style.transform = "translateX(-50%)";
+
+                            tick.style.opacity = i % 5 === 0 ? "1" : "0.6";
+
+                            sliderContainer.appendChild(tick);
+
+                        }
+
+                    }
+
+                    const thumb = document.createElement("div");
+
+                    thumb.style.position = "absolute";
+
+                    thumb.style.width = hasThumbTriangle ? "0" : "18px";
+
+                    thumb.style.height = hasThumbTriangle ? "0" : "18px";
+
+                    thumb.style.background = hasThumbTriangle ? "transparent" : thumbColor;
+
+                    thumb.style.top = hasThumbTriangle ? "-10px" : "-6px";
+
+                    thumb.style.cursor = "pointer";
+
+                    thumb.style.border = hasThumbTriangle ? "none" : "2px solid white";
+
+                    thumb.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.2)";
+
+                    thumb.style.transform = "translateX(-50%)";
+
+                    thumb.style.borderRadius = hasThumbTriangle ? "0" : "50%";
+
+                    thumb.style.transition = "transform 0.2s ease, box-shadow 0.2s ease";
+
+                    thumb.addEventListener("mouseenter", function() {
+
+                        thumb.style.transform = "translateX(-50%) scale(1.1)";
+
+                        thumb.style.boxShadow = "0 3px 8px rgba(0, 0, 0, 0.3)";
+
+                    });
+
+                    thumb.addEventListener("mouseleave", function() {
+
+                        thumb.style.transform = "translateX(-50%)";
+
+                        thumb.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.2)";
+
+                    });
+
+                    if (hasThumbTriangle) {
+
+                        thumb.style.width = "0";
+
+                        thumb.style.height = "0";
+
+                        thumb.style.borderLeft = "10px solid transparent";
+
+                        thumb.style.borderRight = "10px solid transparent";
+
+                        thumb.style.borderBottom = `15px solid ${thumbColor}`;
+
+                        thumb.style.position = "absolute";
+
+                        thumb.style.top = "-12px";
+
+                    }
+
+                    sliderContainer.appendChild(movingTrack);
+
+                    sliderContainer.appendChild(thumb);
+
+                    sliderWrapper.appendChild(sliderContainer);
+
+                    document.querySelector(".sliders-container").appendChild(sliderWrapper);
+
+                    let isDragging = false;
+
+                    let sliderWidth = sliderContainer.offsetWidth;
+
+                    let maxRange = 100;
+
+                    function updateThumbPosition(clientX) {
+
+                        let rect = sliderContainer.getBoundingClientRect();
+
+                        let offsetX = clientX - rect.left;
+
+                        let percentage = Math.max(0, Math.min(1, offsetX / sliderWidth));
+
+                        let value = Math.round(percentage * maxRange);
+
+                        thumb.style.left = `${percentage * 100}%`;
+
+                        movingTrack.style.width = `${percentage * 100}%`;
+
+                        if (initialTransparent) {
+
+                            movingTrack.style.background = fillColor;
+
+                        }
+
+                    }
+
+                    thumb.addEventListener("mousedown", function () {
+
+                        isDragging = true;
+
+                        thumb.style.transform = hasThumbTriangle ? "translateX(-50%) scale(1.2)" : "translateX(-50%) scale(1.2)";
+
+                    });
+
+                    document.addEventListener("mousemove", function (event) {
+
+                        if (isDragging) {
+
+                            updateThumbPosition(event.clientX);
+
+                        }
+
+                    });
+
+                    document.addEventListener("mouseup", function () {
+
+                        isDragging = false;
+
+                        thumb.style.transform = hasThumbTriangle ? "translateX(-50%)" : "translateX(-50%)";
+
+                    });
+
+                    sliderContainer.addEventListener("click", function (event) {
+
+                        updateThumbPosition(event.clientX);
+
+                    });
+
+                }
+
+                createSlider("Track Slider", "#ddd", "green", false, false, false, false, "green", true);
+
+                createSlider("Divisor Slider", "#B0D0FF", "blue", false, true, false, false, "blue", false);
+
+                createSlider("Triangle Thumb Slider", "rgba(255, 0, 0, 0.3)", "red", false, false, true, true, "red", false);
+
+                createSlider("Tick Slider", "#ddd", "blue", true, false, false, false, "blue", false);
+
+            });
+
+        </script>
+
+    </div>
+
+</body>
+
+</html>
